@@ -11,7 +11,8 @@ import java.io.IOException;
 
 public class Client
 {
-    static TCPClient client = null;
+    private static TCPClient client = null;
+    private int current_port = 0;
 
     public static void main(String[] args)
     {
@@ -58,6 +59,8 @@ public class Client
         for (int port = Settings.PORT_FROM; port <= Settings.PORT_TO; port++) {
             try {
                 client = new TCPClient(Settings.host, port);
+                System.out.println("Connected to server " + Settings.host + " on port " + port);
+                this.current_port = port;
                 break;
             } catch (ServerUnavailableException e) {
                 System.out.println(e.getMessage());
@@ -68,7 +71,18 @@ public class Client
         if (client == null) {
             throw new ServerUnavailableException("Unable to connect to server " + Settings.host, Settings.PORT_TO);
         }
+        ClientOperations co = new ClientOperations(this, io);
+        co.createMenu();
+    }
 
+    public TCPClient getClient()
+    {
+        return client;
+    }
+
+    public int getCurrentPort()
+    {
+        return this.current_port;
     }
 
 }
